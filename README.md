@@ -5,6 +5,9 @@ I designed this for an ESP32 board, but I think any board that is supported by t
 
 This code is interrupt-driven so your main program is free to do whatever you want. You can poll for a dialed number, or register a callback to run once a number is dialed.
 
+## WORK IN PROGRESS
+**2024-11-10 - This is a work in progress. It's almost done, but give it another month for it to be production-ready.**
+
 ## Installation
 
 Copy this to your `/lib/` folder and you're ready to go.
