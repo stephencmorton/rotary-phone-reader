@@ -85,6 +85,7 @@ This should "just work", but if your specific phone's characteristics are differ
 - https://en.wikipedia.org/wiki/Pulse_dialing
 - https://www.dialogic.com/webhelp/csp1010/8.4.1_ipn3/dev_overview_dsp_one_-_e1_dial_pulse_address_signaling.htm
 - https://www.3amsystems.com/World_Tone_Database/Signalling_guide?q=Pulse_dialing
+- https://fahrplan.events.ccc.de/congress/2023/fahrplan/system/event_attachments/attachments/000/004/462/original/analog_phones.pdf
 
 
 ### Installing micropython modules on your ESP32
