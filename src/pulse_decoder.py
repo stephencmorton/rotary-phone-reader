@@ -1,9 +1,29 @@
+'''
+Header.
+
+I found a fair number of Arduino C (.ino) libraries to do this, but no good upython ones.
+
+Maybe I'm taking it a bit far, insisting on the make/break durations as really, we know that it's a rotary phone attached, so we know we'll get digits and whether they're well-formed or not, we want to read them. But part of me just had to "do it right".
+
+Different ESP32 boards have different pinouts. Look up yours. Here's an example one.
+https://mischianti.org/doit-esp32-dev-kit-v1-high-resolution-pinout-and-specs/
+
+TODO
+- global variable names
+- timer names
+- when/how to initi the module
+- do timers need to be declared 'global'?
+- remove more function call overhead in interrupt context.
+'''
 import machine
 # import utime as time
 import time
 
-gpio_pin_number = 14
-has_virtual_timers = False
+# Public API
+gpio_pin_number    = 14      # See note in header
+has_virtual_timers = False   # ESP32 does not have virtual timers.
+
+
 # Define GPIO pin for pulse input
 pulse_pin = machine.Pin(gpio_pin_number, machine.Pin.IN, machine.Pin.PULL_DOWN)
 
@@ -17,14 +37,14 @@ MAX_INTER_DIGIT_TIMEOUT_MS = 3000  # Maximum inter-digit timeout (3000 ms)
 TOLERANCE_MS = 10
 
 # Define minimum and maximum allowable durations for MAKE and BREAK phases
-MIN_MAKE_DURATION_MS = MAKE_DURATION_MS - TOLERANCE_MS
-MAX_MAKE_DURATION_MS = MAKE_DURATION_MS + TOLERANCE_MS
+MIN_MAKE_DURATION_MS  = MAKE_DURATION_MS - TOLERANCE_MS
+MAX_MAKE_DURATION_MS  = MAKE_DURATION_MS + TOLERANCE_MS
 MIN_BREAK_DURATION_MS = BREAK_DURATION_MS - TOLERANCE_MS
 MAX_BREAK_DURATION_MS = BREAK_DURATION_MS + TOLERANCE_MS
 
 # State definitions
-STATE_IDLE = "idle"
-STATE_MAKE = "make"
+STATE_IDLE  = "idle"
+STATE_MAKE  = "make"
 STATE_BREAK = "break"
 
 # State machine variables
@@ -36,13 +56,11 @@ last_pulse_time = time.ticks_ms()
 
 # Timer for inter-digit delay
 if has_virtual_timers:
-    inter_digit_timer = machine.Timer(0)
+    inter_digit_timer     = machine.Timer(0)
     max_inter_digit_timer = machine.Timer(1)
 else:
-    inter_digit_timer = machine.Timer(-1)
+    inter_digit_timer     = machine.Timer(-1)
     max_inter_digit_timer = machine.Timer(-1)
-
-
 
 
 # Function to reset digit pulse count
@@ -135,7 +153,7 @@ def retrieve_dialed_number():
     global dialed_digits
     if ready_to_read and state == STATE_IDLE and len(dialed_digits) > 0:
         # Retrieve and clear the dialed digits
-        phone_number = '-'.join(map(str, dialed_digits))
+        phone_number = dialed_digits
         dialed_digits = []  # Reset the array for the next number
         return phone_number
     return None
@@ -149,7 +167,7 @@ if __name__ == '__main__':
         # Check periodically for a completed phone number
         dialed_number = retrieve_dialed_number()
         if dialed_number:
-            print("Detected dialed phone number:", dialed_number)
+            print("Detected dialed phone number:", '-'.join(map(str, dialed_number)))
         
         # Sleep for a bit to avoid excessive polling
         time.sleep(0.1)
