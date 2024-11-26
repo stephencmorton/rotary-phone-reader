@@ -5,6 +5,8 @@ I found a fair number of Arduino C (.ino) libraries to do this, but no good upyt
 
 Maybe I'm taking it a bit far, insisting on the make/break durations as really, we know that it's a rotary phone attached, so we know we'll get digits and whether they're well-formed or not, we want to read them. But part of me just had to "do it right".
 
+ESP32 has pulse counter circuitry, but it does not seem to be supported in micropython (yet).
+
 Different ESP32 boards have different pinouts. Look up yours. Here's an example one.
 https://mischianti.org/doit-esp32-dev-kit-v1-high-resolution-pinout-and-specs/
 
@@ -17,8 +19,8 @@ import machine
 import time
 
 # Public API
-gpio_pin_number    = 14      # See note in header
-has_virtual_timers = False   # ESP32 does not have virtual timers.
+gpio_pin_number    = 7      # See note in header
+has_virtual_timers = False  # ESP32 does not have virtual timers.
 
 
 # Define GPIO pin for pulse input
@@ -158,7 +160,8 @@ def retrieve_dialed_number(as_string = False):
 
 
 # Attach interrupt to the pulse pin
-pulse_pin.irq(trigger=machine.Pin.IRQ_RISING | machine.Pin.IRQ_FALLING, handler=pulse_handler)
+def init():
+    pulse_pin.irq(trigger=machine.Pin.IRQ_RISING | machine.Pin.IRQ_FALLING, handler=pulse_handler)
 
 if __name__ == '__main__':
     # Main loop to monitor and retrieve phone numbers
